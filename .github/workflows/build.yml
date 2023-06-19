@@ -6,6 +6,8 @@ name: ci-build
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - "src/**"
   pull_request:
     branches: [ "master" ]
 
@@ -22,7 +24,10 @@ jobs:
         dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: src
     - name: Build
       run: dotnet build --no-restore
+      working-directory: src
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      working-directory: src
