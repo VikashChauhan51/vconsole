@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VConsole.App": {
+      "commandName": "Project",
+      "commandLineArgs": "clone --url=\"testing\""
+    }
+  }
+}
