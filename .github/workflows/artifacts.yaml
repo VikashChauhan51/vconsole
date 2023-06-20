@@ -11,6 +11,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: src
     - name: Build project
       run: dotnet build --configuration Release --no-restore
       working-directory: src
