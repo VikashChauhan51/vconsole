@@ -4,15 +4,20 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <SignAssembly>False</SignAssembly>
+    <SignAssembly>True</SignAssembly>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>VConsole command line arguments parser.</Title>
     <Description>VConsole is a .NET library to parse command line arguments and execute commands.</Description>
     <PackageProjectUrl>https://github.com/VikashChauhan51/vconsole</PackageProjectUrl>
     <Authors>VikashChauhan51</Authors>
+    <Copyright>Copyright © VikashChauhan51, 2023</Copyright>
     <RepositoryUrl>https://github.com/VikashChauhan51/vconsole</RepositoryUrl>
     <PackageTags>command-line;command-line-parser;command-pattern;commandline</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <AssemblyOriginatorKeyFile>..\VConsole.snk</AssemblyOriginatorKeyFile>
+    <PackageLicenseUrl>https://github.com/VikashChauhan51/vconsole/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <ProjectGuid>{72219BBE-A7AE-4D69-B245-CB95AE266955}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
