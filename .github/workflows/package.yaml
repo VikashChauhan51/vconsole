@@ -1,6 +1,8 @@
 name: Build, Pack and Publish
 
-on: [push]
+on:
+  push:
+    branches: [ "master" ] 
 
 jobs:
   build:
@@ -14,5 +16,7 @@ jobs:
         dotnet-version: 7.0.x
     - name: Pack
       run: dotnet pack --no-build --output nupkgs
+      working-directory: src
     - name: Publish
       run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_APIKEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      working-directory: src
