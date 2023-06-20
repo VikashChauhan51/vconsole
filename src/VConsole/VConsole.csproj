@@ -16,13 +16,20 @@
     <PackageTags>command-line;command-line-parser;command-pattern;commandline</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AssemblyOriginatorKeyFile>..\VConsole.snk</AssemblyOriginatorKeyFile>
-    <PackageLicenseUrl>https://github.com/VikashChauhan51/vconsole/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <ProjectGuid>{72219BBE-A7AE-4D69-B245-CB95AE266955}</ProjectGuid>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+
 
   <ItemGroup>
     <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
