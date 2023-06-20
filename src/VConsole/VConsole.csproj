@@ -4,6 +4,22 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <SignAssembly>False</SignAssembly>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>VConsole command line arguments parser.</Title>
+    <Description>VConsole is a .NET library to parse command line arguments and execute commands.</Description>
+    <PackageProjectUrl>https://github.com/VikashChauhan51/vconsole</PackageProjectUrl>
+    <Authors>VikashChauhan51</Authors>
+    <RepositoryUrl>https://github.com/VikashChauhan51/vconsole</RepositoryUrl>
+    <PackageTags>command-line;command-line-parser;command-pattern;commandline</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
