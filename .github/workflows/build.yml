@@ -1,7 +1,4 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: ci-build
+name: build and test
 
 on:
   push:
@@ -9,22 +6,33 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+env:
+  DOTNET_VERSION: '7.0.x' # The .NET SDK version to use
+
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+  build-and-test:
+
+    name: build-and-test-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
+    - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
-    - name: Restore dependencies
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
       run: dotnet restore
       working-directory: src
+      
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release --no-restore
       working-directory: src
+    
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-restore --verbosity normal
       working-directory: src
