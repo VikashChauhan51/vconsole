@@ -4,12 +4,12 @@ VConsole is a .NET library to parse command line arguments and execute commands.
 The **[VConsole](https://www.nuget.org/packages/VConsole)** command Line Parser Library offers CLR applications a clean and concise API for manipulating command line arguments and related tasks, such as defining switches, options and verb commands. It allows you to display a help screen with a high degree of customization and a simple way to report syntax errors to the end user.
 
 ```cmd
- dotnet add package VConsole --version 1.0.0
+ dotnet add package VConsole
 ```
 or
 
 ```cmd
- NuGet\Install-Package VConsole -Version 1.0.0
+ NuGet\Install-Package VConsole
 ```
 
 ## Quick Start Example
@@ -48,12 +48,12 @@ static void Main(string[] args)
 }
 
 ```
-- Build your application and run it like this:
-    ```cmd
 
-    myapp.exe clone --url=https://github.com/VikashChauhan51/vconsole.git
+```cmd
+# Build your application and run it like this:
+myapp.exe clone --url=https://github.com/VikashChauhan51/vconsole.git
 
-    ```
+ ```
 
 
 ## Dependency Resolver Example:
@@ -149,6 +149,47 @@ var serviceResolver = new DependencyResolver(serviceProvider);
 
 //create parser
 var parser = new Parser(serviceResolver);
+
+// configure commands
+parser
+    .RegisterCommand<Clone>()
+    .ParseArguments(args);
+
+```
+
+```cmd
+# Build your application and run it like this:
+
+myapp.exe clone --url=https://github.com/VikashChauhan51/vconsole.git
+
+```
+
+## Culture Example:
+Default parser has ***InvariantCulture*** to parse command parameters values:
+
+``` C#
+using VConsole;
+
+[Verb("clone", HelpText = "Clone a repository into a new directory.")]
+public class Clone : ICommand
+{
+    [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
+    public string URL { get; set; } = string.Empty;
+    public void Execute()
+    {
+        Console.WriteLine($"Cloning a repository: {URL}");
+    }
+}
+
+//create parser settings
+var settings = new ParserSettings
+    {
+        // set current culture instead of Invariant.
+        ParsingCulture = Thread.CurrentThread.CurrentCulture
+    };
+
+//create parser with settings
+var parser = New Parser(settings);
 
 // configure commands
 parser

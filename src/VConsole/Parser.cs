@@ -1,11 +1,13 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
+using VConsole.Core;
 
 namespace VConsole;
 
 public sealed class Parser : IDisposable
 {
     private readonly Dictionary<string, Type> commands = new Dictionary<string, Type>();
-    private readonly IDependencyResolver dependencyResolver;
+    private readonly IDependencyResolver? dependencyResolver;
     private bool disposed;
     private readonly ParserSettings settings;
     private static readonly Lazy<Parser> DefaultParser = new Lazy<Parser>(
@@ -14,6 +16,11 @@ public sealed class Parser : IDisposable
     public Parser()
     {
         settings = new ParserSettings();
+    }
+
+    public Parser(ParserSettings settings)
+    {
+        this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
     }
     public Parser(IDependencyResolver dependencyResolver)
     {
@@ -106,8 +113,7 @@ public sealed class Parser : IDisposable
             var argumentAttribute = property.GetCustomAttribute<OptionAttribute>();
             if (argumentAttribute != null)
             {
-                var value = argumentAttribute
-                    .GetValue(property, settings.Separator, parameters, settings.NameComparer, settings.ParsingCulture) ??
+                var value = GetValue(property, argumentAttribute, parameters) ??
                     argumentAttribute.Default;
 
                 if (argumentAttribute.Required && value == null)
@@ -119,7 +125,7 @@ public sealed class Parser : IDisposable
                 {
                     property.SetValue(command, value);
                 }
-                    
+
             }
         }
 
@@ -127,7 +133,7 @@ public sealed class Parser : IDisposable
 
     }
 
-    
+
     public Parser ClearCommands()
     {
         commands.Clear();
@@ -156,7 +162,7 @@ public sealed class Parser : IDisposable
                 throw new InvalidOperationException("No dependency resolver available to create a command without default constructor.");
 
             var parameters = constructor.GetParameters()
-                .Select(param => dependencyResolver.GetService(param.ParameterType))
+                .Select(param => dependencyResolver!.GetService(param.ParameterType))
                 .ToArray();
 
             return (ICommand)constructor.Invoke(parameters);
@@ -179,6 +185,60 @@ public sealed class Parser : IDisposable
         commands.Add(name, commandType);
 
     }
+
+    private object? GetValue(PropertyInfo property, OptionAttribute argumentAttribute, string[] args)
+    {
+        if (property is null) throw new ArgumentNullException(nameof(property));
+
+        if (argumentAttribute is null) throw new ArgumentNullException(nameof(argumentAttribute));
+
+        if (args is null) throw new ArgumentNullException(nameof(args));
+
+        if (string.IsNullOrWhiteSpace(argumentAttribute.LongName) &&
+            string.IsNullOrWhiteSpace(argumentAttribute.ShortName))
+        {
+            throw new ArgumentException($"Please provide either [LongName] or [ShortName] of option parameter.");
+        }
+
+        foreach (var arg in args)
+        {
+            var argProp = arg.Split(settings.Separator, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            if (argProp.Length != 2)
+            {
+                throw new ArgumentOutOfRangeException(nameof(args));
+            }
+
+            var propName = argProp[0].Split('-', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+
+            if (settings.NameComparer.Compare(argumentAttribute.LongName, propName) == 0 ||
+                settings.NameComparer.Compare(argumentAttribute.ShortName, propName) == 0)
+            {
+                if (property.PropertyType.IsPrimitive())
+                {
+                    return TypeConverter.ConvertString(argProp[1], property.PropertyType, settings.ParsingCulture);
+                }
+
+                if (property.PropertyType.IsEnum &&
+                    Enum.TryParse(property.PropertyType, argProp[1], settings.NameComparer == StringComparer.OrdinalIgnoreCase, out var val))
+                {
+                    return val;
+                }
+
+                if (property.PropertyType == typeof(Guid) && Guid.TryParse(argProp[1], out var value))
+                {
+                    return value;
+                }
+
+            }
+        }
+
+        return null;
+
+
+    }
+
+
     private void Dispose(bool disposing)
     {
         if (disposed) return;

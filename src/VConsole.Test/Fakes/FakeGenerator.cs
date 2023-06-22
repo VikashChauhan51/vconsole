@@ -63,3 +63,27 @@ public class FakeDependencyCommand : ICommand
         logger.Log(Message);
     }
 }
+
+public enum Level
+{
+    Normal = 0,
+    Error = 1,
+    Warning = 2,
+    Info = 3,
+    Verbose = 4,
+
+}
+
+[Verb("fake-enum", null, "fake enum command", typeof(FakeEnumCommand))]
+public class FakeEnumCommand : ICommand
+{
+    [Option('e', "enum")]
+    public Level Level { get; set; }
+
+    [Option('g', "guid")]
+    public Guid Id { get; set; }
+    public void Execute()
+    {
+        Console.WriteLine($"{Id} {Level}");
+    }
+}
