@@ -35,4 +35,11 @@ public sealed class Verb
                    FromAttribute((VerbAttribute)attrs.Single()),
                    type);
     }
+
+    public static Tuple<Verb, Type> SelectFromType(Type type)
+    {
+        var varb = type.GetTypeInfo().GetCustomAttributes(typeof(VerbAttribute), true).ToArray().First();
+
+        return Tuple.Create(FromAttribute((VerbAttribute)varb), type);
+    }
 }
