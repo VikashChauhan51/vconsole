@@ -55,6 +55,7 @@ public class ParserSettings : IDisposable
         }
     }
 
+    public bool InteractiveMode { get; init; }
     public StringComparer NameComparer
     {
         get

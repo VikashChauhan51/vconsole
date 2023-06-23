@@ -12,6 +12,20 @@ or
  NuGet\Install-Package VConsole
 ```
 
+## At a glance:
+- Compatible with **.NET Core 7+**.
+- Doesn't depend on other packages (No dependencies beyond standard base libraries).
+- One line parsing using default singleton:` VConsole.Parser.Default.ParseArguments(...)` and multiples overload methods.
+- Map to scalar types, including `Enums`, `Guid`,`datetimeoffset` and **Nullable** scalar types, `Enums`,`datetimeoffset` and `Guid`.
+- Automatically ignore unused and additional provided parameters.
+- Automatically map parameter if value is:(with long name) `--url=value`, `-url=value`, `url=value` and (with short name) `--u=value`, `-u=value`, `u=value`.
+- Default `help` command: `myapp.exe help -c=command`.
+- Interactive mode support.
+- Support custom ***DependencyInjection*** to resolve the command dependencies with the help of `IDependencyResolver` interface.
+- Any **Culture** support as per your requirment. Default parser has ***InvariantCulture***.
+- Support custom parameter value separator. Default parser has `=` separator i.e.: `--parm=value`.
+
+
 ## Quick Start Example
 - Create a class to define valid `command` with `varb` and `options` **attrbutes** to receive the parsed options.
 - Register commands using `RegisterCommand` or `RegisterCommandsFromAssembly` methods.
@@ -189,7 +203,7 @@ var settings = new ParserSettings
     };
 
 //create parser with settings
-var parser = New Parser(settings);
+var parser = new Parser(settings);
 
 // configure commands
 parser
@@ -203,4 +217,115 @@ parser
 
 myapp.exe clone --url=https://github.com/VikashChauhan51/vconsole.git
 
+```
+
+## Interactive Mode Example:
+Default parser has ***InteractiveMode*** off:
+
+``` C#
+using VConsole;
+
+[Verb("clone", HelpText = "Clone a repository into a new directory.")]
+public class Clone : ICommand
+{
+    [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
+    public string URL { get; set; } = string.Empty;
+    public void Execute()
+    {
+        Console.WriteLine($"Cloning a repository: {URL}");
+    }
+}
+
+//create parser settings
+var settings = new ParserSettings
+{
+    InteractiveMode = true
+};
+
+//create parser with settings
+var parser = new Parser(settings);
+
+// configure commands
+parser
+    .RegisterCommand<Clone>()
+    .ParseArguments(args);
+
+```
+
+```cmd
+# Build your application and run it without any arguments:
+
+myapp.exe
+
+```
+
+## Custom Separator Example:
+Default parser has `=` value for ***Separator***.
+
+``` C#
+using VConsole;
+
+[Verb("clone", HelpText = "Clone a repository into a new directory.")]
+public class Clone : ICommand
+{
+    [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
+    public string URL { get; set; } = string.Empty;
+    public void Execute()
+    {
+        Console.WriteLine($"Cloning a repository: {URL}");
+    }
+}
+
+//create parser settings
+var settings = new ParserSettings
+{
+    Separator = ':'
+};
+
+//create parser with settings
+var parser = new Parser(settings);
+
+// configure commands
+parser
+    .RegisterCommand<Clone>()
+    .ParseArguments(args);
+
+```
+
+```cmd
+# Build your application and run it like this:
+
+myapp.exe clone --url:https://github.com/VikashChauhan51/vconsole.git
+
+```
+
+## Default Help Command Example:
+
+``` C#
+using VConsole;
+
+[Verb("clone", HelpText = "Clone a repository into a new directory.")]
+public class Clone : ICommand
+{
+    [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
+    public string URL { get; set; } = string.Empty;
+    public void Execute()
+    {
+        Console.WriteLine($"Cloning a repository: {URL}");
+    }
+}
+
+// configure commands
+Parser.Default
+    .RegisterCommand<Clone>()
+    .ParseArguments(args);
+
+```
+
+```cmd
+# Build your application and run it like this:
+
+myapp.exe help --command=clone
+or
+myapp.exe help -c=clone
 ```
