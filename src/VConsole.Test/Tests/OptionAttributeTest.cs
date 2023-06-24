@@ -39,4 +39,14 @@ public class OptionAttributeTest
         //Assert
         Assert.Null(exception);
     }
+
+    [Fact]
+    public static void Test_Option_Default_Not_Argument_Exception()
+    {
+        //Act
+        var exception = Record.Exception(() => new OptionAttribute());
+
+        //Assert
+        Assert.Null(exception);
+    }
 }

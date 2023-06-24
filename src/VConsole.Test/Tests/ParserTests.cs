@@ -157,7 +157,7 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test__Parser_With_DependencyResolver()
+    public static void Test_Parser_With_DependencyResolver()
     {
         var mockDependencyResolver = new Mock<IDependencyResolver>();
 
@@ -172,7 +172,7 @@ public class ParserTests
             $"-m=testing message"
         };
 
-        parser.ClearCommands()
+        parser
             .RegisterCommand<FakeDependencyCommand>()
             .ParseArguments(args);
     }
@@ -180,7 +180,7 @@ public class ParserTests
 
     [Theory]
     [MemberData(nameof(Invalid_Length_Agrs))]
-    public static void Test__Parser_GetValue_Argument_Exception_With_Invalid_Length_Agrs(string[] args)
+    public static void Test_Parser_GetValue_Argument_Exception_With_Invalid_Length_Agrs(string[] args)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Parser.Default
            .ClearCommands()
@@ -190,7 +190,7 @@ public class ParserTests
 
     [Theory]
     [MemberData(nameof(Valid_Agrs))]
-    public static void Test__Parser_GetValue_With_Valid_Agrs(string[] args)
+    public static void Test_Parser_GetValue_With_Valid_Agrs(string[] args)
     {
         var exception = Record.Exception(() => Parser.Default
             .ClearCommands()
@@ -202,7 +202,7 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test__Parser_GetValue_With_Valid_Agrs_And_Properties()
+    public static void Test_Parser_GetValue_With_Valid_Agrs_And_Properties()
     {
         var culture = Thread.CurrentThread.CurrentCulture;
         var setting = new ParserSettings()
@@ -225,7 +225,6 @@ public class ParserTests
         };
 
         var exception = Record.Exception(() => parser
-           .ClearCommands()
            .RegisterCommand<FakeCommand>()
            .ParseArguments(args));
 
@@ -236,7 +235,7 @@ public class ParserTests
 
 
     [Fact]
-    public static void Test__Parser_GetValue_With_Valid_Enum_Agrs()
+    public static void Test_Parser_GetValue_With_Valid_Enum_Agrs()
     {
         var culture = Thread.CurrentThread.CurrentCulture;
         var setting = new ParserSettings()
@@ -253,8 +252,33 @@ public class ParserTests
         };
 
         var exception = Record.Exception(() => parser
-           .ClearCommands()
            .RegisterCommand<FakeEnumCommand>()
+           .ParseArguments(args));
+
+        //Assert
+        Assert.Null(exception);
+
+    }
+
+    [Fact]
+    public static void Test_Parser_GetValue_By_Parameter_Name()
+    {
+        var culture = Thread.CurrentThread.CurrentCulture;
+        var setting = new ParserSettings()
+        {
+            ParsingCulture = culture
+        };
+        var parser = new Parser(setting);
+
+        var args = new string[]
+        {
+            "fake-default",
+            $"--Title={Guid.NewGuid()}",
+            $"--Id=100"
+        };
+
+        var exception = Record.Exception(() => parser
+           .RegisterCommand<FakeDefaultCommand>()
            .ParseArguments(args));
 
         //Assert

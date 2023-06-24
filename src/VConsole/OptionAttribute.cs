@@ -10,6 +10,10 @@ public sealed class OptionAttribute : BaseAttribute
     private readonly string longName;
     private readonly string shortName;
 
+    public OptionAttribute() : this(string.Empty, string.Empty)
+    {
+
+    }
     private OptionAttribute(string shortName, string longName) : base()
     {
 
