@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using VConsole.Core;
 
 namespace VConsole;
@@ -17,31 +16,31 @@ public sealed class Parser : IDisposable
     public Parser()
     {
         settings = new ParserSettings();
-        console = new ConsoleHost();
-        AddDefaultHelpCommand();
+        console = GetConsoleHost();
+        AddDefaultCommands();
     }
 
     public Parser(ParserSettings settings)
     {
         this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-        console = new ConsoleHost();
-        AddDefaultHelpCommand();
+        console = GetConsoleHost();
+        AddDefaultCommands();
     }
     public Parser(IDependencyResolver dependencyResolver)
     {
         this.dependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
 
         settings = new ParserSettings();
-        console = new ConsoleHost();
-        AddDefaultHelpCommand();
+        console = GetConsoleHost();
+        AddDefaultCommands();
     }
 
     public Parser(IDependencyResolver dependencyResolver, Action<ParserSettings> configuration)
     {
         this.dependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
         if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-        console = new ConsoleHost();
-        AddDefaultHelpCommand();
+        console = GetConsoleHost();
+        AddDefaultCommands();
         settings = new ParserSettings();
         configuration(settings);
 
@@ -51,8 +50,8 @@ public sealed class Parser : IDisposable
     {
         this.dependencyResolver = dependencyResolver ?? throw new ArgumentNullException(nameof(dependencyResolver));
         this.settings = settings;
-        console = new ConsoleHost();
-        AddDefaultHelpCommand();
+        console = GetConsoleHost();
+        AddDefaultCommands();
     }
 
 
@@ -113,18 +112,14 @@ public sealed class Parser : IDisposable
 
         var commandName = args.First();
 
-        var verbUsed = verbs.FirstOrDefault(vt =>
-                settings.NameComparer.Equals(vt.Item1.Name, commandName)
-                || vt.Item1.Aliases.Any(alias => settings.NameComparer.Equals(alias, commandName))
-        );
-
-        if (verbUsed == default)
+        var verbName = GetCommandVerbName(verbs, commandName);
+        if (string.IsNullOrEmpty(verbName))
         {
             throw new InvalidOperationException($"Could not retrieve command from arguments {string.Join(", ", args)}");
         }
 
         var parameters = args.Skip(1).ToArray();
-        var commandType = commands[verbUsed.Item1.Name];
+        var commandType = commands[verbName];
         var command = CreateCommand(commandType);
 
         foreach (var property in commandType.GetRuntimeProperties())
@@ -143,7 +138,9 @@ public sealed class Parser : IDisposable
                 if (argumentAttribute.Required && value == null && settings.InteractiveMode)
                 {
                     var name = !string.IsNullOrWhiteSpace(argumentAttribute.LongName) ?
-                        $"--{argumentAttribute.LongName}" : $"-{argumentAttribute.ShortName}";
+                        $"--{argumentAttribute.LongName}"
+                        : !string.IsNullOrWhiteSpace(argumentAttribute.ShortName) ?
+                        $"-{argumentAttribute.ShortName}" : $"-{property.Name}";
 
                     var input = console.ReadValue($"Enter value for parameter {name}{settings.Separator}");
 
@@ -161,7 +158,8 @@ public sealed class Parser : IDisposable
 
         if (command is HelpCommand helpCommand)
         {
-            if (Commands.TryGetValue(helpCommand.Command, out var cmd) && cmd is not null)
+            var cmdName = GetCommandVerbName(verbs,helpCommand.Command);
+            if (Commands.TryGetValue(cmdName, out var cmd) && cmd is not null)
                 PrintCommand(cmd);
             else
                 PrintAllCommands();
@@ -232,12 +230,6 @@ public sealed class Parser : IDisposable
 
         if (args is null) throw new ArgumentNullException(nameof(args));
 
-        if (string.IsNullOrWhiteSpace(argumentAttribute.LongName) &&
-            string.IsNullOrWhiteSpace(argumentAttribute.ShortName))
-        {
-            throw new ArgumentException($"Please provide either [LongName] or [ShortName] of option parameter.");
-        }
-
         foreach (var arg in args)
         {
             var argProp = arg.Split(settings.Separator, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
@@ -250,7 +242,8 @@ public sealed class Parser : IDisposable
             var propName = argProp[0].Split('-', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
 
             if (settings.NameComparer.Compare(argumentAttribute.LongName, propName) == 0 ||
-                settings.NameComparer.Compare(argumentAttribute.ShortName, propName) == 0)
+                settings.NameComparer.Compare(argumentAttribute.ShortName, propName) == 0 ||
+                settings.NameComparer.Compare(property.Name, propName) == 0)
             {
                 if (property.PropertyType.IsPrimitive())
                 {
@@ -285,11 +278,12 @@ public sealed class Parser : IDisposable
 
     private void PrintAllCommands()
     {
+        AssemblyHelper.PrintInfo(console);
+        console.WriteLine("");
         console.WriteMessage("Commands: \n");
         foreach (var command in Commands)
         {
             PrintCommand(command.Value);
-            console.WriteLine("");
             console.WriteLine("");
         }
             
@@ -305,7 +299,11 @@ public sealed class Parser : IDisposable
     }
     private void PrintParameters(Type commandType)
     {
-        foreach (var property in commandType.GetRuntimeProperties())
+        var properties = commandType.GetRuntimeProperties();
+        if (properties.Any())
+            console.WriteLine("  Options:");
+
+        foreach (var property in properties)
         {
             var argumentAttribute = property.GetCustomAttribute<OptionAttribute>();
             if (argumentAttribute != null)
@@ -325,15 +323,34 @@ public sealed class Parser : IDisposable
                     console.WriteMessage($"   -{argumentAttribute.ShortName}{settings.Separator}<{property.PropertyType}>    {argumentAttribute.HelpText} \n");
 
                 }
+                else
+                {
+                    console.WriteMessage($"   {property.Name}{settings.Separator}<{property.PropertyType}>    {argumentAttribute.HelpText} \n");
+                }
             }
 
         }
     }
 
 
-    private void AddDefaultHelpCommand()
+    private void AddDefaultCommands()
     {
         RegisterCommand(typeof(HelpCommand));
+        RegisterCommand(typeof(VersionCommand));
+    }
+
+    private IConsole GetConsoleHost()
+    {
+        return settings.InteractiveMode ?
+            new PrintHost()
+            : new PrintHost();
+    }
+
+    private string GetCommandVerbName(IEnumerable<Tuple<Verb, Type>> verbs, string commandName)
+    {
+        return verbs.FirstOrDefault(vt =>
+            settings.NameComparer.Equals(vt.Item1.Name, commandName)
+            || vt.Item1.Aliases.Any(alias => settings.NameComparer.Equals(alias, commandName)))?.Item1?.Name ?? string.Empty;
     }
     private void Dispose(bool disposing)
     {

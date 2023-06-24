@@ -13,13 +13,14 @@ or
 ```
 
 ## At a glance:
-- Compatible with **.NET Core 7+**.
+- Compatible with **.NET Core 6+**.
 - Doesn't depend on other packages (No dependencies beyond standard base libraries).
 - One line parsing using default singleton:` VConsole.Parser.Default.ParseArguments(...)` and multiples overload methods.
 - Map to scalar types, including `Enums`, `Guid`,`datetimeoffset` and **Nullable** scalar types, `Enums`,`datetimeoffset` and `Guid`.
 - Automatically ignore unused and additional provided parameters.
 - Automatically map parameter if value is:(with long name) `--url=value`, `-url=value`, `url=value` and (with short name) `--u=value`, `-u=value`, `u=value`.
-- Default `help` command: `myapp.exe help -c=command`.
+- Default `help` command: `myapp.exe help -c=command` or `myapp.exe --help`.
+- Default `version` command: `myapp.exe version` or `myapp.exe --version`.
 - Interactive mode support.
 - Support custom ***DependencyInjection*** to resolve the command dependencies with the help of `IDependencyResolver` interface.
 - Any **Culture** support as per your requirment. Default parser has ***InvariantCulture***.

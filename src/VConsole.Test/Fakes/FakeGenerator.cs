@@ -87,3 +87,17 @@ public class FakeEnumCommand : ICommand
         Console.WriteLine($"{Id} {Level}");
     }
 }
+
+[Verb("fake-default",helpText:"Default command parameters name")]
+public class FakeDefaultCommand : ICommand
+{
+    [Option]
+    public string Title { get; set; } = string.Empty;
+
+    [Option]
+    public int Id { get; set; }
+    public void Execute()
+    {
+        Console.WriteLine($"{Title} :{Id}");
+    }
+}
