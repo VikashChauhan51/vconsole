@@ -1,7 +1,7 @@
 ﻿using VConsole;
 using VConsole.App.Commands;
 
-Parser.Default
+await Parser.Default
     .RegisterCommand<Clone>()
     .RegisterCommand<Commit>()
     .RegisterCommand<Push>()
