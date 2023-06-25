@@ -7,7 +7,7 @@ namespace VConsole.Test.Tests;
 public class ParserTests
 {
     [Fact]
-    public static void Test_Default_Parser_With_Valid_Command_Args()
+    public async void Test_Default_Parser_With_Valid_Command_Args()
     {
         var culture = CultureInfo.InvariantCulture;
         var date = DateTime.Now;
@@ -23,7 +23,7 @@ public class ParserTests
              $"--timeonly={TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(20)).ToString(culture)}"
         };
 
-        var exception = Record.Exception(() => Parser.Default
+        var exception =  await Record.ExceptionAsync(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand<FakeCommand>()
             .ParseArguments(args));
@@ -33,7 +33,7 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test_Default_Parser_With_Aliase_Command_Args()
+    public async void Test_Default_Parser_With_Aliase_Command_Args()
     {
         var culture = CultureInfo.InvariantCulture;
         var date = DateTime.Now;
@@ -49,7 +49,7 @@ public class ParserTests
              $"--timeonly={TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(20)).ToString(culture)}"
         };
 
-        var exception = Record.Exception(() => Parser.Default
+        var exception = await Record.ExceptionAsync(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand<FakeCommand>()
             .ParseArguments(args));
@@ -59,7 +59,7 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test_Default_Parser_With_Assembly_Commands()
+    public async void Test_Default_Parser_With_Assembly_Commands()
     {
         var culture = CultureInfo.InvariantCulture;
         var date = DateTime.Now;
@@ -75,7 +75,7 @@ public class ParserTests
              $"--timeonly={TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(20)).ToString(culture)}"
         };
 
-        var exception = Record.Exception(() => Parser.Default
+        var exception = await Record.ExceptionAsync(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommandsFromAssembly(Assembly.GetExecutingAssembly())
             .ParseArguments(args));
@@ -85,7 +85,7 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test_Default_Parser_With_Command_Type()
+    public async void Test_Default_Parser_With_Command_Type()
     {
         var culture = CultureInfo.InvariantCulture;
         var date = DateTime.Now;
@@ -101,7 +101,7 @@ public class ParserTests
              $"--timeonly={TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(20)).ToString(culture)}"
         };
 
-        var exception = Record.Exception(() => Parser.Default
+        var exception = await Record.ExceptionAsync(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand(typeof(FakeCommand))
             .ParseArguments(args));
@@ -112,27 +112,27 @@ public class ParserTests
 
 
     [Fact]
-    public static void Test_Default_Parser_With_Null_Command()
+    public async void Test_Default_Parser_With_Null_Command()
     {
-        Assert.Throws<ArgumentNullException>(() => Parser.Default
+       await Assert.ThrowsAsync<ArgumentNullException>(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand(null)
             .ParseArguments(new string[0]));
     }
 
     [Fact]
-    public static void Test_Default_Parser_With_Invalid_Command()
+    public async void Test_Default_Parser_With_Invalid_Command()
     {
-        Assert.Throws<InvalidOperationException>(() => Parser.Default
+       await Assert.ThrowsAsync<InvalidOperationException>(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand(typeof(string))
             .ParseArguments(new string[0]));
     }
 
     [Fact]
-    public static void Test_Default_Parser_With_Duplicate_Command()
+    public async void Test_Default_Parser_With_Duplicate_Command()
     {
-        Assert.Throws<InvalidOperationException>(() => Parser.Default
+       await Assert.ThrowsAsync<InvalidOperationException>(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand(typeof(FakeCommand))
             .RegisterCommand(typeof(FakeCommand))
@@ -140,24 +140,24 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test_Default_Parser_Without_Command()
+    public async void Test_Default_Parser_Without_Command()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => Parser.Default
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await Parser.Default
             .ClearCommands()
             .ParseArguments(new string[0]));
     }
 
     [Fact]
-    public static void Test_Default_Parser_Without_Args()
+    public async void Test_Default_Parser_Without_Args()
     {
-        Assert.Throws<ArgumentNullException>(() => Parser.Default
+       await Assert.ThrowsAsync<ArgumentNullException>(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand(typeof(FakeCommand))
             .ParseArguments(null));
     }
 
     [Fact]
-    public static void Test_Parser_With_DependencyResolver()
+    public async void Test_Parser_With_DependencyResolver()
     {
         var mockDependencyResolver = new Mock<IDependencyResolver>();
 
@@ -172,7 +172,7 @@ public class ParserTests
             $"-m=testing message"
         };
 
-        parser
+       await parser
             .RegisterCommand<FakeDependencyCommand>()
             .ParseArguments(args);
     }
@@ -180,9 +180,9 @@ public class ParserTests
 
     [Theory]
     [MemberData(nameof(Invalid_Length_Agrs))]
-    public static void Test_Parser_GetValue_Argument_Exception_With_Invalid_Length_Agrs(string[] args)
+    public async void Test_Parser_GetValue_Argument_Exception_With_Invalid_Length_Agrs(string[] args)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => Parser.Default
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await Parser.Default
            .ClearCommands()
            .RegisterCommand(typeof(FakeCommand))
            .ParseArguments(args));
@@ -190,9 +190,9 @@ public class ParserTests
 
     [Theory]
     [MemberData(nameof(Valid_Agrs))]
-    public static void Test_Parser_GetValue_With_Valid_Agrs(string[] args)
+    public async void Test_Parser_GetValue_With_Valid_Agrs(string[] args)
     {
-        var exception = Record.Exception(() => Parser.Default
+        var exception = await Record.ExceptionAsync(async () => await Parser.Default
             .ClearCommands()
             .RegisterCommand<FakeCommand>()
             .ParseArguments(args));
@@ -202,7 +202,7 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test_Parser_GetValue_With_Valid_Agrs_And_Properties()
+    public async void Test_Parser_GetValue_With_Valid_Agrs_And_Properties()
     {
         var culture = Thread.CurrentThread.CurrentCulture;
         var setting = new ParserSettings()
@@ -224,7 +224,7 @@ public class ParserTests
              $"--timeonly={TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(20)).ToString(culture)}"
         };
 
-        var exception = Record.Exception(() => parser
+        var exception = await Record.ExceptionAsync(async () => await parser
            .RegisterCommand<FakeCommand>()
            .ParseArguments(args));
 
@@ -235,7 +235,7 @@ public class ParserTests
 
 
     [Fact]
-    public static void Test_Parser_GetValue_With_Valid_Enum_Agrs()
+    public async void Test_Parser_GetValue_With_Valid_Enum_Agrs()
     {
         var culture = Thread.CurrentThread.CurrentCulture;
         var setting = new ParserSettings()
@@ -251,7 +251,7 @@ public class ParserTests
             $"--enum={Level.Warning}"
         };
 
-        var exception = Record.Exception(() => parser
+        var exception = await Record.ExceptionAsync(async () => await parser
            .RegisterCommand<FakeEnumCommand>()
            .ParseArguments(args));
 
@@ -261,7 +261,7 @@ public class ParserTests
     }
 
     [Fact]
-    public static void Test_Parser_GetValue_By_Parameter_Name()
+    public async void Test_Parser_GetValue_By_Parameter_Name()
     {
         var culture = Thread.CurrentThread.CurrentCulture;
         var setting = new ParserSettings()
@@ -277,7 +277,7 @@ public class ParserTests
             $"--Id=100"
         };
 
-        var exception = Record.Exception(() => parser
+        var exception = await Record.ExceptionAsync(async () =>await parser
            .RegisterCommand<FakeDefaultCommand>()
            .ParseArguments(args));
 

@@ -42,22 +42,23 @@ public class Clone : ICommand
 {
     [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
     public string URL { get; set; } = string.Empty;
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine($"Cloning a repository: {URL}");
+        return Task.CompletedTask;
     }
 }
 
 # top level statment in dotnet core
-Parser.Default
+await Parser.Default
     .RegisterCommand<Clone>()
     .ParseArguments(args);
 
 or
 
-static void Main(string[] args)
+static async Task Main(string[] args)
 {
-    Parser.Default
+    await Parser.Default
     .RegisterCommand<Clone>()
     .ParseArguments(args);
 }
@@ -118,10 +119,11 @@ public class Clone : ICommand
         this.fooService = fooService;
         this.logger = logger;
     }
-    public void Execute()
+    public Task Execute()
     {
         fooService.DoThing("Pulling...");
         logger.LogInformation($"Cloning a repository: {URL}");
+        return Task.CompletedTask;
     }
 }
 
@@ -166,7 +168,7 @@ var serviceResolver = new DependencyResolver(serviceProvider);
 var parser = new Parser(serviceResolver);
 
 // configure commands
-parser
+await parser
     .RegisterCommand<Clone>()
     .ParseArguments(args);
 
@@ -190,9 +192,10 @@ public class Clone : ICommand
 {
     [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
     public string URL { get; set; } = string.Empty;
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine($"Cloning a repository: {URL}");
+        return Task.CompletedTask;
     }
 }
 
@@ -207,7 +210,7 @@ var settings = new ParserSettings
 var parser = new Parser(settings);
 
 // configure commands
-parser
+await parser
     .RegisterCommand<Clone>()
     .ParseArguments(args);
 
@@ -231,9 +234,10 @@ public class Clone : ICommand
 {
     [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
     public string URL { get; set; } = string.Empty;
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine($"Cloning a repository: {URL}");
+        return Task.CompletedTask;
     }
 }
 
@@ -247,7 +251,7 @@ var settings = new ParserSettings
 var parser = new Parser(settings);
 
 // configure commands
-parser
+await parser
     .RegisterCommand<Clone>()
     .ParseArguments(args);
 
@@ -271,9 +275,10 @@ public class Clone : ICommand
 {
     [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
     public string URL { get; set; } = string.Empty;
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine($"Cloning a repository: {URL}");
+        return Task.CompletedTask;
     }
 }
 
@@ -287,7 +292,7 @@ var settings = new ParserSettings
 var parser = new Parser(settings);
 
 // configure commands
-parser
+await parser
     .RegisterCommand<Clone>()
     .ParseArguments(args);
 
@@ -310,14 +315,15 @@ public class Clone : ICommand
 {
     [Option('u', "url", Required = true, HelpText = "Cloud repository URL.")]
     public string URL { get; set; } = string.Empty;
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine($"Cloning a repository: {URL}");
+        return Task.CompletedTask;
     }
 }
 
 // configure commands
-Parser.Default
+await Parser.Default
     .RegisterCommand<Clone>()
     .ParseArguments(args);
 

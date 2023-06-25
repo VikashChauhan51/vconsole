@@ -95,7 +95,7 @@ public sealed class Parser : IDisposable
     }
 
 
-    public void ParseArguments(string[] args)
+    public Task ParseArguments(string[] args)
     {
         if (commands.Count == 0) throw new ArgumentOutOfRangeException(nameof(commands));
         if (args == null) throw new ArgumentNullException(nameof(args));
@@ -158,14 +158,14 @@ public sealed class Parser : IDisposable
 
         if (command is HelpCommand helpCommand)
         {
-            var cmdName = GetCommandVerbName(verbs,helpCommand.Command);
+            var cmdName = GetCommandVerbName(verbs, helpCommand.Command);
             if (Commands.TryGetValue(cmdName, out var cmd) && cmd is not null)
                 PrintCommand(cmd);
             else
                 PrintAllCommands();
         }
 
-        command.Execute();
+        return command.Execute();
 
     }
 

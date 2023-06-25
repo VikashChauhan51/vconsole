@@ -27,9 +27,10 @@ public class FakeCommand : ICommand
     [Option('m', "timeonly")]
     public TimeOnly FakeTimeOnly { get; set; }
 
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine("executed");
+        return Task.CompletedTask;
     }
 }
 
@@ -58,9 +59,10 @@ public class FakeDependencyCommand : ICommand
         this.logger = logger;
     }
 
-    public void Execute()
+    public Task Execute()
     {
         logger.Log(Message);
+        return Task.CompletedTask;
     }
 }
 
@@ -82,9 +84,10 @@ public class FakeEnumCommand : ICommand
 
     [Option('g', "guid")]
     public Guid Id { get; set; }
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine($"{Id} {Level}");
+        return Task.CompletedTask;
     }
 }
 
@@ -96,8 +99,9 @@ public class FakeDefaultCommand : ICommand
 
     [Option]
     public int Id { get; set; }
-    public void Execute()
+    public Task Execute()
     {
         Console.WriteLine($"{Title} :{Id}");
+        return Task.CompletedTask;
     }
 }
