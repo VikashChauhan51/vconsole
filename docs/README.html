@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>VConsole </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="VConsole ">
+    
+      <link rel="shortcut icon" href="favicon.ico">
+      <link rel="stylesheet" href="styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="styles/docfx.css">
+      <link rel="stylesheet" href="styles/main.css">
+      <meta property="docfx:navrel" content="toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="vconsole">VConsole</h1>
+
+<p>VConsole is a .NET library to parse command line arguments and execute commands.</p>
+<p>The <strong><a href="https://www.nuget.org/packages/VConsole">VConsole</a></strong> command Line Parser Library offers CLR applications a clean and concise API for manipulating command line arguments and related tasks, such as defining switches, options and verb commands. It allows you to display a help screen with a high degree of customization and a simple way to report syntax errors to the end user.</p>
+<pre><code class="lang-cmd"> dotnet add package VConsole
+</code></pre>
+<p>or</p>
+<pre><code class="lang-cmd"> NuGet\Install-Package VConsole
+</code></pre>
+<h2 id="at-a-glance">At a glance:</h2>
+<ul>
+<li>Compatible with <strong>.NET Core 6+</strong>.</li>
+<li>Doesn't depend on other packages (No dependencies beyond standard base libraries).</li>
+<li>One line parsing using default singleton:<code> VConsole.Parser.Default.ParseArguments(...)</code> and multiples overload methods.</li>
+<li>Map to scalar types, including <code>Enums</code>, <code>Guid</code>,<code>datetimeoffset</code> and <strong>Nullable</strong> scalar types, <code>Enums</code>,<code>datetimeoffset</code> and <code>Guid</code>.</li>
+<li>Automatically ignore unused and additional provided parameters.</li>
+<li>Automatically map parameter if value is:(with long name) <code>--url=value</code>, <code>-url=value</code>, <code>url=value</code> and (with short name) <code>--u=value</code>, <code>-u=value</code>, <code>u=value</code>.</li>
+<li>Default <code>help</code> command: <code>myapp.exe help -c=command</code> or <code>myapp.exe --help</code>.</li>
+<li>Default <code>version</code> command: <code>myapp.exe version</code> or <code>myapp.exe --version</code>.</li>
+<li>Interactive mode support.</li>
+<li>Support custom <em><strong>DependencyInjection</strong></em> to resolve the command dependencies with the help of <code>IDependencyResolver</code> interface.</li>
+<li>Any <strong>Culture</strong> support as per your requirment. Default parser has <em><strong>InvariantCulture</strong></em>.</li>
+<li>Support custom parameter value separator. Default parser has <code>=</code> separator i.e.: <code>--parm=value</code>.</li>
+</ul>
+<h2 id="quick-start-example">Quick Start Example</h2>
+<ul>
+<li>Create a class to define valid <code>command</code> with <code>varb</code> and <code>options</code> <strong>attrbutes</strong> to receive the parsed options.</li>
+<li>Register commands using <code>RegisterCommand</code> or <code>RegisterCommandsFromAssembly</code> methods.</li>
+<li>Call <code>ParseArguments</code> with the <code>args</code> string array.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="lang-C#">using VConsole;
+
+[Verb(&quot;clone&quot;, HelpText = &quot;Clone a repository into a new directory.&quot;)]
+public class Clone : ICommand
+{
+    [Option('u', &quot;url&quot;, Required = true, HelpText = &quot;Cloud repository URL.&quot;)]
+    public string URL { get; set; } = string.Empty;
+    public Task Execute()
+    {
+        Console.WriteLine($&quot;Cloning a repository: {URL}&quot;);
+        return Task.CompletedTask;
+    }
+}
+
+# top level statment in dotnet core
+await Parser.Default
+    .RegisterCommand&lt;Clone&gt;()
+    .ParseArguments(args);
+
+or
+
+static async Task Main(string[] args)
+{
+    await Parser.Default
+    .RegisterCommand&lt;Clone&gt;()
+    .ParseArguments(args);
+}
+
+</code></pre>
+<pre><code class="lang-cmd"># Build your application and run it like this:
+myapp.exe clone --url=https://github.com/VikashChauhan51/vconsole.git
+
+</code></pre>
+<h2 id="dependency-resolver-example">Dependency Resolver Example:</h2>
+<p>Here we took an example with Microsoft <em><strong>Dependency Injection</strong></em>, but you can use any one you prefer. Please add following nuget packages before to proceed:</p>
+<ul>
+<li>VConsole</li>
+<li>Microsoft.Extensions.DependencyInjection</li>
+<li>Microsoft.Extensions.Logging.Console</li>
+</ul>
+<pre><code class="lang-C#">// Crate a fake dependency service for command
+
+public interface IFooService
+{
+    void DoThing(string message);
+}
+
+public class FooService : IFooService
+{
+    private readonly ILogger&lt;FooService&gt; logger;
+    public FooService(ILoggerFactory loggerFactory)
+    {
+        logger = loggerFactory.CreateLogger&lt;FooService&gt;();
+    }
+
+    public void DoThing(string message)
+    {
+        logger.LogInformation($&quot;Doing the thing {message}&quot;);
+    }
+}
+
+</code></pre>
+<pre><code class="lang-C#">// Create a command with dependency
+
+[Verb(&quot;clone&quot;, HelpText = &quot;Clone a repository into a new directory.&quot;)]
+public class Clone : ICommand
+{
+    [Option('u', &quot;url&quot;, Required = true, HelpText = &quot;Cloud repository URL.&quot;)]
+    public string URL { get; set; } = string.Empty;
+
+    private readonly IFooService fooService;
+    private readonly ILogger&lt;Clone&gt; logger;
+    public Clone(IFooService fooService, ILogger&lt;Clone&gt; logger)
+    {
+        this.fooService = fooService;
+        this.logger = logger;
+    }
+    public Task Execute()
+    {
+        fooService.DoThing(&quot;Pulling...&quot;);
+        logger.LogInformation($&quot;Cloning a repository: {URL}&quot;);
+        return Task.CompletedTask;
+    }
+}
+
+
+</code></pre>
+<pre><code class="lang-C#">// Create a service resolver
+
+public class DependencyResolver : IDependencyResolver
+{
+    private readonly ServiceProvider serviceProvider;
+
+    public DependencyResolver(ServiceProvider serviceProvider)
+    {
+        this.serviceProvider = serviceProvider;
+    }
+    public object GetService(Type serviceType) =&gt; serviceProvider.GetService(serviceType) ?? throw new ArgumentOutOfRangeException(nameof(serviceType));
+
+}
+
+</code></pre>
+<pre><code class="lang-C#">// create DI container and parser. (Program.cs)
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using VConsole;
+
+
+//setup our DI
+var serviceProvider = new ServiceCollection()
+    .AddLogging(x =&gt; x.AddConsole())
+    .AddSingleton&lt;IFooService, FooService&gt;()
+    .BuildServiceProvider();
+
+//setup dependency resolver
+var serviceResolver = new DependencyResolver(serviceProvider);
+
+//create parser
+var parser = new Parser(serviceResolver);
+
+// configure commands
+await parser
+    .RegisterCommand&lt;Clone&gt;()
+    .ParseArguments(args);
+
+</code></pre>
+<pre><code class="lang-cmd"># Build your application and run it like this:
+
+myapp.exe clone --url=https://github.com/VikashChauhan51/vconsole.git
+
+</code></pre>
+<h2 id="culture-example">Culture Example:</h2>
+<p>Default parser has <em><strong>InvariantCulture</strong></em> to parse command parameters values:</p>
+<pre><code class="lang-C#">using VConsole;
+
+[Verb(&quot;clone&quot;, HelpText = &quot;Clone a repository into a new directory.&quot;)]
+public class Clone : ICommand
+{
+    [Option('u', &quot;url&quot;, Required = true, HelpText = &quot;Cloud repository URL.&quot;)]
+    public string URL { get; set; } = string.Empty;
+    public Task Execute()
+    {
+        Console.WriteLine($&quot;Cloning a repository: {URL}&quot;);
+        return Task.CompletedTask;
+    }
+}
+
+//create parser settings
+var settings = new ParserSettings
+    {
+        // set current culture instead of Invariant.
+        ParsingCulture = Thread.CurrentThread.CurrentCulture
+    };
+
+//create parser with settings
+var parser = new Parser(settings);
+
+// configure commands
+await parser
+    .RegisterCommand&lt;Clone&gt;()
+    .ParseArguments(args);
+
+</code></pre>
+<pre><code class="lang-cmd"># Build your application and run it like this:
+
+myapp.exe clone --url=https://github.com/VikashChauhan51/vconsole.git
+
+</code></pre>
+<h2 id="interactive-mode-example">Interactive Mode Example:</h2>
+<p>Default parser has <em><strong>InteractiveMode</strong></em> off:</p>
+<pre><code class="lang-C#">using VConsole;
+
+[Verb(&quot;clone&quot;, HelpText = &quot;Clone a repository into a new directory.&quot;)]
+public class Clone : ICommand
+{
+    [Option('u', &quot;url&quot;, Required = true, HelpText = &quot;Cloud repository URL.&quot;)]
+    public string URL { get; set; } = string.Empty;
+    public Task Execute()
+    {
+        Console.WriteLine($&quot;Cloning a repository: {URL}&quot;);
+        return Task.CompletedTask;
+    }
+}
+
+//create parser settings
+var settings = new ParserSettings
+{
+    InteractiveMode = true
+};
+
+//create parser with settings
+var parser = new Parser(settings);
+
+// configure commands
+await parser
+    .RegisterCommand&lt;Clone&gt;()
+    .ParseArguments(args);
+
+</code></pre>
+<pre><code class="lang-cmd"># Build your application and run it without any arguments:
+
+myapp.exe
+
+</code></pre>
+<h2 id="custom-separator-example">Custom Separator Example:</h2>
+<p>Default parser has <code>=</code> value for <em><strong>Separator</strong></em>.</p>
+<pre><code class="lang-C#">using VConsole;
+
+[Verb(&quot;clone&quot;, HelpText = &quot;Clone a repository into a new directory.&quot;)]
+public class Clone : ICommand
+{
+    [Option('u', &quot;url&quot;, Required = true, HelpText = &quot;Cloud repository URL.&quot;)]
+    public string URL { get; set; } = string.Empty;
+    public Task Execute()
+    {
+        Console.WriteLine($&quot;Cloning a repository: {URL}&quot;);
+        return Task.CompletedTask;
+    }
+}
+
+//create parser settings
+var settings = new ParserSettings
+{
+    Separator = ':'
+};
+
+//create parser with settings
+var parser = new Parser(settings);
+
+// configure commands
+await parser
+    .RegisterCommand&lt;Clone&gt;()
+    .ParseArguments(args);
+
+</code></pre>
+<pre><code class="lang-cmd"># Build your application and run it like this:
+
+myapp.exe clone --url:https://github.com/VikashChauhan51/vconsole.git
+
+</code></pre>
+<h2 id="default-help-command-example">Default Help Command Example:</h2>
+<pre><code class="lang-C#">using VConsole;
+
+[Verb(&quot;clone&quot;, HelpText = &quot;Clone a repository into a new directory.&quot;)]
+public class Clone : ICommand
+{
+    [Option('u', &quot;url&quot;, Required = true, HelpText = &quot;Cloud repository URL.&quot;)]
+    public string URL { get; set; } = string.Empty;
+    public Task Execute()
+    {
+        Console.WriteLine($&quot;Cloning a repository: {URL}&quot;);
+        return Task.CompletedTask;
+    }
+}
+
+// configure commands
+await Parser.Default
+    .RegisterCommand&lt;Clone&gt;()
+    .ParseArguments(args);
+
+</code></pre>
+<pre><code class="lang-cmd"># Build your application and run it like this:
+
+myapp.exe help --command=clone
+or
+myapp.exe help -c=clone
+</code></pre>
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/VikashChauhan51/vconsole/blob/master/README.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

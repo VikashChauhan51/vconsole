@@ -1,0 +1,213 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/vik/Documents/GitHub/vconsole",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Conceptual",
+      "source_relative_path": "README.md",
+      "output": {
+        ".html": {
+          "relative_path": "README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.BaseAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.BaseAttribute.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.ConsoleHost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.ConsoleHost.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.Core.TypeConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.Core.TypeConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.Core.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.Core.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.ICommand.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.ICommand.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.IConsole.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.IConsole.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.IDependencyResolver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.IDependencyResolver.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.OptionAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.OptionAttribute.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.Parser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.Parser.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.ParserSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.ParserSettings.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.Verb.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.Verb.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.VerbAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.VerbAttribute.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/VConsole.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/VConsole.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
